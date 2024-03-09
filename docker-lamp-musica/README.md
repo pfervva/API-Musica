@@ -27,6 +27,6 @@ http://127.0.0.1/api-musica/endp/auth
 ```json
 {
     "result": "ok",
-    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MDg5NzU3NDEsImRhdGEiOnsiaWQiOiIxMyIsImVtYWlsIjoicGZlckBwZmVyLmVzIn19.g1zZ2os5Bq1amaz10yYPuFp-tMbKleOt38N7zbtTnOA"
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MTAwMDcwMDYsImRhdGEiOnsiaWQiOiIxMiIsImVtYWlsIjoicGZlckBwZmVyLmVzIn19.D2JNnBD75fsNWNxg6Wac4qySOKqW5z9583n2cTMR1qY"
 }
 ```

@@ -2,16 +2,16 @@
 require_once '../respuestas/response.php';
 require_once '../modelos-datos/database.php';
 
-class Pueblo extends Database
+class cancion extends Database
 {
-	private $table = 'pueblos';
+	private $table = 'canciones';
 
 	//parámetros permitidos para hacer consultas selección.
 	private $allowedConditions_get = array(
 		'id',
 		'id_usuario',
 		'nombre',
-		'descripcion',
+		'artista',
 		'imagen',
 		'page'
 	);
@@ -21,18 +21,16 @@ class Pueblo extends Database
 	private $allowedConditions_insert = array(
 		'id_usuario',
 		'nombre',
-		'descripcion',
+		'artista',
 		'nombres',
-		'habitantes',
 		'imagen'
 	);
 
 //parámetros permitidos para la actualización.
 private $allowedConditions_update = array(
 		'nombre',
-		'descripcion',
+		'artista',
 		'nombres',
-		'habitantes',
 		'imagen',
 		'id_usuario'
 	
@@ -65,10 +63,10 @@ private $allowedConditions_update = array(
 			Response::result(400, $response);
 			exit;
 		}
-		if(!isset($data['descripcion']) || empty($data['descripcion'])){
+		if(!isset($data['artista']) || empty($data['artista'])){
 			$response = array(
 				'result' => 'error',
-				'details' => 'El campo descripcion es obligatorio'
+				'details' => 'El campo artista es obligatorio'
 			);
 
 			Response::result(400, $response);
@@ -76,7 +74,7 @@ private $allowedConditions_update = array(
 		}
 
 		/*
-		Tengo que comprobar la extensión de la imagen del pueblo
+		Tengo que comprobar la extensión de la imagen del cancion
 		*/
 		if (isset($data['imagen']) & !empty($data['imagen'])){
 			$img_array = explode(';base64,', $data['imagen']);
@@ -160,7 +158,7 @@ y la ejecutará.
 				$extension = strtoupper(explode('/', $img_array[0])[1]); //formato de la imagen
 				$datos_imagen = $img_array[1]; //aqui me quedo con los datos de la imagen
 				$nombre_imagen = uniqid(); //creo un único id.
-				//del directorio actual de user.class, subo un nivel (1) y estando en el directorio api-pueblos, concateno public\img
+				//del directorio actual de user.class, subo un nivel (1) y estando en el directorio api-canciones, concateno public\img
 				$path = dirname(__DIR__, 1)."/public/img/".$nombre_imagen.".".$extension;
 				file_put_contents($path, base64_decode($datos_imagen));  //subimos la imagen al servidor.
 				$params['imagen'] = $nombre_imagen.'.'.$extension;  //pasamos como parametro en foto, con el nombre y extensión completo.
@@ -219,9 +217,9 @@ y la ejecutará.
 			*/
 			if (isset($params['imagen'])){
 				//necesito saber el nombre del fichero antiguo a partir del id y eliminarlo del servidor.
-				$pueblos = parent::getDB($this->table, $_GET);
-				$pueblo = $pueblos[0];
-				$imagen_antigua = $pueblo['imagen'];
+				$canciones = parent::getDB($this->table, $_GET);
+				$cancion = $canciones[0];
+				$imagen_antigua = $cancion['imagen'];
 				$path = dirname(__DIR__, 1)."/public/img/".$imagen_antigua;
 				//echo $imagen_antigua;exit;
 				//si no puedo eliminar la imagen antigua, lo indico.
@@ -229,7 +227,7 @@ y la ejecutará.
 				if ($imagen_antigua != null && !unlink($path)){
 						$response = array(
 							'result' => 'warning',
-							'details' => 'No se ha podido eliminar la imagen actual del pueblo'
+							'details' => 'No se ha podido eliminar la imagen actual del cancion'
 						);	
 						Response::result(200, $response);
 						exit;
@@ -269,7 +267,7 @@ y la ejecutará.
  * y por tanto arma una respuesta de error.
  * 
  * Si todo ha ido bien, retorna de la función a user y éste acaba.
- * También hay que eliminar la imagen de ese pueblo.
+ * También hay que eliminar la imagen de ese cancion.
  */
 	public function delete($id)
 	{
@@ -282,7 +280,7 @@ y la ejecutará.
 			if (!unlink($path)){
 				$response = array(
 					'result' => 'warning',
-					'details' => 'No se ha podido eliminar la imagen del pueblo'
+					'details' => 'No se ha podido eliminar la imagen del cancion'
 				);	
 				Response::result(200, $response);
 				exit;

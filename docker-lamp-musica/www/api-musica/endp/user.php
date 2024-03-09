@@ -7,7 +7,7 @@ require_once '../modelos/auth.class.php';
 $url_completa="http://".$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'];
 //echo $url_completa;
 
-$url_raiz="http://".$_SERVER['HTTP_HOST']."/api-pueblos/public/img";
+$url_raiz="http://".$_SERVER['HTTP_HOST']."/api-musica/public/img";
 
 echo $url_raiz;
 exit;
@@ -49,7 +49,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 		//Arma la respuesta con resultado ok y los usuarios en el array.  Luego le pasamos
 		//a resul nuestro response.
 		//ME FALTA, MANDAR COMO IMAGEN, LA URL.
-		$url_raiz_img="http://".$_SERVER['HTTP_HOST']."/api-pueblos/public/img";
+		$url_raiz_img="http://".$_SERVER['HTTP_HOST']."/api-musica/public/img";
 		foreach ($usuarios as $usuario) {
 			if (!empty($usuario['imagen'])){
 				$imagen = $usuario['imagen'];

@@ -1,25 +1,25 @@
 <?php
 require_once '../respuestas/response.php';
-require_once '../modelos/pueblo.class.php';
+require_once '../modelos/cancion.class.php';
 require_once '../modelos/auth.class.php';
 
 /**
- * endpoint para la gestión de datos con los pueblos.
- * Get (para objeter todos los pueblos)
+ * endpoint para la gestión de datos con los musicas.
+ * Get (para objeter todos los canciones)
  *  - token (para la autenticación y obtención del id usuario)
  * 
- * Post (para la creación de pueblo)
+ * Post (para la creación de cancion)
  *  - token (para la autenticación y obtención del id usuario)
- *  - datos del pueblo por body
+ *  - datos del cancion por body
  * 
- * Put (para la actualización del pueblo)
+ * Put (para la actualización del cancion)
  *  *  - token (para la autenticación y obtención del id usuario)
- *  - id del pueblo por parámetro
- *  - datos nuevos del pueblo por body
+ *  - id del cancion por parámetro
+ *  - datos nuevos del cancion por body
  * 
- * Delete (para la eliminación del pueblo)
+ * Delete (para la eliminación del cancion)
  *  *  - token (para la autenticación y obtención del id usuario)
- *  - id del pueblo por parámetro
+ *  - id del cancion por parámetro
  * 
  */
 
@@ -31,7 +31,7 @@ $auth->verify();
 
 
 //hasta aquí, el token está perfectamente verificada. Creamos modelo para que pueda gestionar las peticiones
-$pueblo = new Pueblo();
+$cancion = new cancion();
 
 switch ($_SERVER['REQUEST_METHOD']) {
 	case 'GET':
@@ -78,34 +78,34 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 exit;
         }
         */
-        //Recuperamos todos los pueblos
-        $pueblos = $pueblo->get($params);
-        //$auth->insertarLog('lleva a solicitud de pueblos');
-        $url_raiz_img = "http://".$_SERVER['HTTP_HOST']."/api-pueblos/public/img";
-		for($i=0; $i< count($pueblos); $i++){
-			if (!empty($pueblos[$i]['imagen']))
-				$pueblos[$i]['imagen'] = $url_raiz_img ."/". $pueblos[$i]['imagen'];
+        //Recuperamos todos los canciones
+        $canciones = $cancion->get($params);
+        //$auth->insertarLog('lleva a solicitud de canciones');
+        $url_raiz_img = "http://".$_SERVER['HTTP_HOST']."/api-musica/public/img";
+		for($i=0; $i< count($canciones); $i++){
+			if (!empty($canciones[$i]['imagen']))
+				$canciones[$i]['imagen'] = $url_raiz_img ."/". $canciones[$i]['imagen'];
 		}
 
 
 /*
         $response = array(
             'result'=> 'ok',
-            'details'=>"Hay pueblos"
+            'details'=>"Hay canciones"
         );
         Response::result(200, $response);
         break;
 */
         $response = array(
             'result'=> 'ok',
-            'pueblos'=> $pueblos
+            'canciones'=> $canciones
         );
-       // $auth->insertarLog('devuelve pueblos'); 
+       // $auth->insertarLog('devuelve canciones'); 
         Response::result(200, $response);
         break;
     
     case 'POST':
-       // $auth->insertaLog("Recibe petición de creacion de pueblo");
+       // $auth->insertaLog("Recibe petición de creacion de cancion");
 
         /**
          * Recibimos el json con los datos a insertar, pero necesitamos
@@ -148,18 +148,18 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
 
 
-        $insert_id_pueblo = $pueblo->insert($params);
+        $insert_id_cancion = $cancion->insert($params);
         //Debo hacer una consulta, para devolver tambien el nombre de la imagen.
-        $id_param['id'] = $insert_id_pueblo;
-        $pueblo = $pueblo->get($id_param);
-        if($pueblo[0]['imagen'] !='')
-            $name_file =  "http://".$_SERVER['HTTP_HOST']."/api-pueblos/public/img/".$pueblo[0]['imagen'];
+        $id_param['id'] = $insert_id_cancion;
+        $cancion = $cancion->get($id_param);
+        if($cancion[0]['imagen'] !='')
+            $name_file =  "http://".$_SERVER['HTTP_HOST']."/api-musica/public/img/".$cancion[0]['imagen'];
         else
             $name_file = '';
 
         $response = array(
 			'result' => 'ok insercion',
-			'insert_id' => $insert_id_pueblo,
+			'insert_id' => $insert_id_cancion,
             'file_img'=> $name_file
 		);
 
@@ -169,14 +169,14 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
     case 'PUT':
         /*
-        Es totalmente necesario tener los parámetros del id del pueblo a modificar
+        Es totalmente necesario tener los parámetros del id del cancion a modificar
         y también el id del usuario, aunque esto lo puedo sacar del token.
         */
 		$params = json_decode(file_get_contents('php://input'), true);
        /* if (!isset($params) ||  !isset($_GET['id']) || empty($_GET['id']) || !isset($params['id_usuario']) || empty($params['id_usuario'])){
             $response = array(
 				'result' => 'error',
-				'details' => 'Error en la solicitud de actualización del pueblo'
+				'details' => 'Error en la solicitud de actualización del cancion'
 			);
 
 			Response::result(400, $response);
@@ -187,7 +187,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
         if (!isset($params) || !isset($_GET['id']) || empty($_GET['id'])  ){
             $response = array(
 				'result' => 'error',
-				'details' => 'Error en la solicitud de actualización del pueblo. No has pasado el id del pueblo'
+				'details' => 'Error en la solicitud de actualización del cancion. No has pasado el id del cancion'
 			);
 
 			Response::result(400, $response);
@@ -211,13 +211,13 @@ switch ($_SERVER['REQUEST_METHOD']) {
         }
 
 
-        $pueblo->update($_GET['id'], $params);  //actualizo ese pueblo.
+        $cancion->update($_GET['id'], $params);  //actualizo ese cancion.
         $id_param['id'] = $_GET['id'];
-        $pueblo = $pueblo->get($id_param);
+        $cancion = $cancion->get($id_param);
        
 
-        if($pueblo[0]['imagen'] !='')
-            $name_file =  "http://".$_SERVER['HTTP_HOST']."/api-pueblos/public/img/".$pueblo[0]['imagen'];
+        if($cancion[0]['imagen'] !='')
+            $name_file =  "http://".$_SERVER['HTTP_HOST']."/api-musica/public/img/".$cancion[0]['imagen'];
         else
             $name_file = '';
             
@@ -246,7 +246,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 			exit;
 		}
 
-		$pueblo->delete($_GET['id']);
+		$cancion->delete($_GET['id']);
 
 		$response = array(
 			'result' => 'ok'
