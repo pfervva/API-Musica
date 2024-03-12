@@ -68,12 +68,12 @@ private $allowedConditions_update = array(
 		/*
 		Si viene el campo disponible, debe ser booleano.
 		*/
-		if(isset($data['disponible']) && !($data['disponible'] == "1" || $data['disponible'] == "0")){
+		if(isset($data['disponible']) && $data['disponible'] !== "1"){
 			$response = array(
 				'result' => 'error',
-				'details' => 'El campo disponible debe ser del tipo boolean'
+				'details' => 'Solo puedes registrar con disponible a 1'
 			);
-
+	
 			Response::result(400, $response);
 			exit;
 		}
