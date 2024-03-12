@@ -1,86 +1,93 @@
 <?php
 
 /**
- * Modelo para la authenticación.
+ * Modelo para la autenticación.
  */
 class AuthModel
 {
-	private $connection;
-	
-	public function __construct(){
-		$this->connection = new mysqli('db', 'root', 'santi', 'cancionesDb', '3306');
+    private $connection;
+    
+    public function __construct()
+    {
+        $this->connection = new mysqli('db', 'root', 'santi', 'cancionesDb', '3306');
 
-		if($this->connection->connect_errno){
-			echo 'Error de conexión a la base de datos';
-			exit;
-		}
-	}
+        if ($this->connection->connect_errno) {
+            echo 'Error de conexión a la base de datos';
+            exit;
+        }
+    }
 
-	/**
-	 * Este método, recibe el email y el password ya codificado.
-	 * Realiza una query, devolviendo el id, nombres a partir del username y de la password codificada.
-	 */
+    /**
+     * Este método, recibe el email y el password ya codificado.
+     * Realiza una query, devolviendo el id, nombre, email y el campo disponible
+     * a partir del email y de la password codificada.
+     */
+    public function login($email, $password)
+    {
+        $query = "SELECT id, nombre, email, disponible FROM usuarios WHERE email = ? AND password = ?";
 
-	public function login($email, $password)
-	{
-		$query = "SELECT id, nombre, email FROM usuarios WHERE email = '$email' AND password = '$password'";
+        if ($stmt = $this->connection->prepare($query)) {
+            $stmt->bind_param("ss", $email, $password);
+            $stmt->execute();
+            $results = $stmt->get_result();
 
-		$results = $this->connection->query($query);
+            $resultArray = [];
+            while ($row = $results->fetch_assoc()) {
+                $resultArray[] = $row;
+            }
+            $stmt->close();
 
-		$resultArray = array();
+            return $resultArray;
+        } else {
+            return [];
+        }
+    }
 
-		if($results != false){
-			foreach ($results as $value) {
-				$resultArray[] = $value;
-			}
-		}
+    /**
+     * Actualiza el token a partir del id. Cada logeo, tenemos que actualizar el registro.
+     */
+    public function update($id, $token)
+    {
+        $query = "UPDATE usuarios SET token = ? WHERE id = ?";
+        if ($stmt = $this->connection->prepare($query)) {
+            $stmt->bind_param("si", $token, $id);
+            $stmt->execute();
+            $affectedRows = $stmt->affected_rows;
+            $stmt->close();
+            return $affectedRows;
+        }
+        return 0;
+    }
 
-		//devuelve un array con el id, nombres y username.
-		return $resultArray;
-	}
+    /**
+     * Retorna el token dado un id de usuario.
+     */
+    public function getById($id)
+    {
+        $query = "SELECT token FROM usuarios WHERE id = ?";
+        if ($stmt = $this->connection->prepare($query)) {
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $result = $stmt->get_result();
 
-	/**
-	 * Setea el token a partir del id. Cada logeo, tenemos que actualizar el registro.
-	 */
+            $resultArray = [];
+            while ($row = $result->fetch_assoc()) {
+                $resultArray[] = $row;
+            }
+            $stmt->close();
+            return $resultArray;
+        } else {
+            return [];
+        }
+    }
 
-	public function update($id, $token)
-	{
-		$query = "UPDATE usuarios SET token = '$token' WHERE id = $id";
-
-		$this->connection->query($query);
-		
-		if(!$this->connection->affected_rows){
-			return 0;
-		}
-
-		return $this->connection->affected_rows;
-	}
-
-	/**
-	 * Retorna el token dado un id de usuario.
-	 */
-	public function getById($id)
-	{
-		$query = "SELECT token FROM usuarios WHERE id = $id";
-
-		$results = $this->connection->query($query);
-
-		$resultArray = array();
-
-		if($results != false){
-			foreach ($results as $value) {
-				$resultArray[] = $value;
-			}
-		}
-
-		return $resultArray;
-	}
-
-
-
-	public function insertarLog($milog){
-		$query = "INSERT INTO log (log) VALUES('$milog')";
-		//echo $query;exit;
-		$this->connection->query($query);
-	}
+    public function insertarLog($milog)
+    {
+        $query = "INSERT INTO log (log) VALUES(?)";
+        if ($stmt = $this->connection->prepare($query)) {
+            $stmt->bind_param("s", $milog);
+            $stmt->execute();
+            $stmt->close();
+        }
+    }
 }
