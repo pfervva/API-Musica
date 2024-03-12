@@ -19,7 +19,7 @@ class Authentication extends AuthModel
             Response::result(400, $response);
             exit;
         }
-        
+
         $result = parent::login($user['email'], hash('sha256', $user['password']));
 
         if (sizeof($result) == 0 || $result[0]['disponible'] != 1) {
@@ -45,38 +45,7 @@ class Authentication extends AuthModel
 
         return $jwt;
     }
-    public function signInAdmin($user) {
-        if (!isset($user['email']) || !isset($user['password']) || empty($user['email']) || empty($user['password'])) {
-            $response = [
-                'result' => 'error',
-                'details' => 'Los campos password y email son obligatorios'
-            ];
-            Response::result(400, $response);
-            exit;
-        }
 
-        $result = parent::login($user['email'], hash('sha256', $user['password']));
-
-        // Verificar si el usuario es un administrador con 'disponible' igual a '2'
-        if (sizeof($result) == 0 || $result[0]['disponible'] != 2) {
-            $response = [
-                'result' => 'error',
-                'details' => 'Acceso denegado. Solo administradores pueden acceder.'
-            ];
-            Response::result(403, $response);
-            exit;
-        }
-
-        // Aquí, procede como lo harías normalmente generando y devolviendo el token
-        $dataToken = [
-            // Tus datos de token...
-        ];
-
-        $jwt = JWT::encode($dataToken, $this->key);
-        parent::update($result[0]['id'], $jwt);
-        return $jwt;
-    }
-}
     public function getIdUser()
     {
         return $this->idUser;
