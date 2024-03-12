@@ -61,26 +61,36 @@ class Authentication extends AuthModel
             Response::result(403, $response);
             exit;
         }
-
+    
         $jwt = $_SERVER['HTTP_API_KEY'];
-
+    
         try {
             $data = JWT::decode($jwt, $this->key, ['HS256']);
             $this->idUser = $data->data->id;
             $user = parent::getById($this->idUser);
-
+    
             if ($user[0]['token'] != $jwt) {
-                throw new Exception();
+                throw new Exception("Token inválido");
+            }
+    
+            if ($user[0]['disponible'] != 2) {
+                $response = [
+                    'result' => 'error',
+                    'details' => 'No tiene los permisos de administrador para esta solicitud'
+                ];
+                Response::result(403, $response);
+                exit;
             }
         } catch (\Throwable $th) {
             $response = [
                 'result' => 'error',
-                'details' => 'No tiene los permisos para esta solicitud'
+                'details' => 'No eres administrador'
             ];
             Response::result(403, $response);
             exit;
         }
     }
+
 
     public function modifyToken($id, $email)
     {

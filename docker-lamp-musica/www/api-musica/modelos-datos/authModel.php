@@ -64,7 +64,7 @@ class AuthModel
      */
     public function getById($id)
     {
-        $query = "SELECT token FROM usuarios WHERE id = ?";
+        $query = "SELECT id, email, token, disponible FROM usuarios WHERE id = ?";
         if ($stmt = $this->connection->prepare($query)) {
             $stmt->bind_param("i", $id);
             $stmt->execute();
